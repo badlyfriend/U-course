@@ -1,17 +1,23 @@
 package com.ujiuye.servlet;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.ujiuye.pojo.ResultVo;
 import com.ujiuye.pojo.User;
 import com.ujiuye.service.UserService;
 import com.ujiuye.service.UserServiceImpl;
 import com.ujiuye.servlet.base.BaseServlet;
+import com.ujiuye.utils.PageUtils;
 import com.ujiuye.utils.WriteJsonUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Bob
@@ -82,5 +88,67 @@ public class UserServlet extends BaseServlet {
         req.getSession().removeAttribute("name");
         // 抹除成功后返回一个true
         resp.getWriter().print(true);
+    }
+
+    /**
+     * 分页+模糊查询
+     * @param req
+     * @param resp
+     */
+    public void findByPage(HttpServletRequest req , HttpServletResponse resp) {
+        // 获取参数
+        String pageSize = req.getParameter("pageSize");
+        String currentPage = req.getParameter("currentPage");
+        String search = req.getParameter("search");
+
+        // 进行查询操作
+        PageUtils pu = us.findByPage(pageSize,currentPage,search);
+
+        // 查询成功将pu封装到vo对象中 返回给前台
+        vo = new ResultVo(200 , "查询成功",pu);
+
+        WriteJsonUtils.writeJson(vo,resp);
+    }
+
+    public void addUsers(HttpServletRequest req , HttpServletResponse resp) throws InvocationTargetException, IllegalAccessException {
+        // 使用BeanUtils类处理数据
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        User user = new User();
+        BeanUtils.populate(user,parameterMap);
+
+        // 添加数据
+        int i = us.addUsers(user);
+
+        if(i > 0) {
+            vo = new ResultVo(200 , "添加成功");
+        }else {
+            vo = new ResultVo(500 , "添加失败");
+        }
+
+        WriteJsonUtils.writeJson(vo,resp);
+    }
+
+    public void updateUsers(HttpServletRequest req , HttpServletResponse resp) throws InvocationTargetException, IllegalAccessException {
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        User user = new User();
+        BeanUtils.populate(user,parameterMap);
+        int i = us.updateUsers(user);
+        if(i > 0) {
+            vo = new ResultVo(200 , "修改成功");
+        }else {
+            vo = new ResultVo(500 , "修改失败");
+        }
+        WriteJsonUtils.writeJson(vo,resp);
+    }
+
+    public void delAll(HttpServletRequest req , HttpServletResponse resp) {
+        String uid = req.getParameter("uid");
+        Boolean i = us.delAll(uid);
+        if(i) {
+            vo = new ResultVo(200 , "删除成功");
+        }else {
+            vo = new ResultVo(500 , "删除失败");
+        }
+        WriteJsonUtils.writeJson(vo,resp);
     }
 }
