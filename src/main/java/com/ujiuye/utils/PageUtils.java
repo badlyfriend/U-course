@@ -1,5 +1,7 @@
 package com.ujiuye.utils;
 
+import com.ujiuye.pojo.Course;
+import com.ujiuye.pojo.CourseUser;
 import com.ujiuye.pojo.User;
 
 import java.util.List;
@@ -19,6 +21,10 @@ public class PageUtils {
     private int nextPage;//下一页
     //增加一个属性用来存储对应的list集合
     private List<User> userList;
+    //增加一个属性用来存储对应的list集合
+    private List<Course> courseList;
+
+    private List<CourseUser> courseUserList;
 
     public PageUtils(int pageCount, int currentPage, int sumCount) {
         this.pageCount = pageCount;
@@ -119,6 +125,22 @@ public class PageUtils {
         this.userList = userList;
     }
 
+    public List<Course> getCourseList() {
+        return courseList;
+    }
+
+    public void setCourseList(List<Course> courseList) {
+        this.courseList = courseList;
+    }
+
+    public List<CourseUser> getCourseUserList() {
+        return courseUserList;
+    }
+
+    public void setCourseUserList(List<CourseUser> courseUserList) {
+        this.courseUserList = courseUserList;
+    }
+
     @Override
     public String toString() {
         return "PageUtils{" +
@@ -130,6 +152,8 @@ public class PageUtils {
                 ", prePage=" + prePage +
                 ", nextPage=" + nextPage +
                 ", userList=" + userList +
+                ", courseList=" + courseList +
+                ", courseUserList=" + courseUserList +
                 '}';
     }
 }
